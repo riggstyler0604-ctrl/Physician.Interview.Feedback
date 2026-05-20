@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physician Behavioral Interview Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#eef2f7;color:#1e2d40;min-height:100vh}
+
+/* ── App header ── */
+.app-header{background:#0d3b73;color:#fff;padding:14px 24px;display:flex;align-items:center;gap:14px}
+.header-logo{width:36px;height:36px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header-logo svg{width:22px;height:22px}
+.header-text .org{font-size:.72rem;opacity:.7;letter-spacing:.04em;text-transform:uppercase}
+.header-text h1{font-size:1.1rem;font-weight:700}
+
+/* ── Progress bar ── */
+.progress-wrap{background:#fff;border-bottom:1px solid #dde3ec;padding:12px 20px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.progress-steps{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:2px}
+.ps{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+.ps-circle{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;background:#dde3ec;color:#8895a7;transition:all .25s}
+.ps-circle.active{background:#0d3b73;color:#fff;box-shadow:0 0 0 3px rgba(13,59,115,.18)}
+.ps-circle.done{background:#1a9e5c;color:#fff}
+.ps-label{font-size:.6rem;color:#8895a7;text-align:center;max-width:56px;line-height:1.2;white-space:nowrap}
+.ps-line{height:2px;flex:1;min-width:10px;background:#dde3ec;margin-bottom:18px;transition:background .25s}
+.ps-line.done{background:#1a9e5c}
+
+/* ── Content ── */
+.main{max-width:740px;margin:24px auto 90px;padding:0 14px}
+.step-panel{display:none}
+.step-panel.active{display:block}
+
+/* ── Card ── */
+.card{background:#fff;border-radius:12px;padding:26px;box-shadow:0 1px 5px rgba(0,0,0,.07);margin-bottom:16px}
+.card-title{font-size:1.2rem;font-weight:700;color:#0d3b73;margin-bottom:4px}
+.card-sub{font-size:.84rem;color:#7a8898;margin-bottom:20px;line-height:1.5}
+
+/* ── Form ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:540px){.grid2{grid-template-columns:1fr}}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+label.lbl{font-size:.83rem;font-weight:600;color:#4a5568}
+input[type=text],input[type=date],textarea,select{border:1.5px solid #dde3ec;border-radius:8px;padding:10px 12px;font-size:.92rem;font-family:inherit;color:#1e2d40;width:100%;transition:border-color .2s,box-shadow .2s}
+input:focus,textarea:focus{outline:none;border-color:#0d3b73;box-shadow:0 0 0 3px rgba(13,59,115,.1)}
+input.err,textarea.err{border-color:#d93025}
+textarea{resize:vertical;min-height:90px}
+.err-msg{font-size:.78rem;color:#d93025;margin-top:3px;display:none}
+.err-msg.show{display:block}
+
+/* ── Dos & Don'ts reference ── */
+.ref-box{background:#fffbeb;border:1.5px solid #f2c744;border-radius:10px;padding:20px;margin-bottom:16px}
+.ref-box h3{font-size:.95rem;font-weight:700;color:#7c5a00;margin-bottom:10px}
+.ref-box p{font-size:.85rem;color:#7c5a00;line-height:1.65;margin-bottom:10px}
+.tag-cloud{display:grid;grid-template-columns:repeat(3,1fr);gap:5px 12px;margin-bottom:14px}
+@media(max-width:480px){.tag-cloud{grid-template-columns:repeat(2,1fr)}}
+.tag{background:#fee2e2;color:#991b1b;font-size:.78rem;font-weight:600;padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:6px}
+.tag::before{content:'✕';font-size:.65rem;color:#d93025;flex-shrink:0}
+.dd-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.dd-table th{background:#fef3c7;padding:7px 11px;text-align:left;font-weight:700;color:#7c5a00}
+.dd-table td{padding:7px 11px;border-bottom:1px solid #fde68a;vertical-align:top;color:#7c5a00;line-height:1.5}
+.dd-table tr:last-child td{border-bottom:none}
+
+/* ── Acknowledge ── */
+.ack-label{display:flex;align-items:flex-start;gap:10px;background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:8px;padding:13px 15px;margin-top:16px;cursor:pointer}
+.ack-label input[type=checkbox]{width:17px;height:17px;margin-top:1px;accent-color:#1a9e5c;flex-shrink:0;cursor:pointer}
+.ack-label span{font-size:.88rem;font-weight:600;color:#065f46;line-height:1.5}
+
+/* ── Competency section ── */
+.comp-badge{display:inline-block;background:#0d3b73;color:#fff;font-size:.72rem;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:8px}
+.q-group{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.q-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1.5px solid #dde3ec;border-radius:8px;cursor:pointer;transition:all .2s}
+.q-row:hover{border-color:#0d3b73;background:#f5f8fd}
+.q-row.sel{border-color:#0d3b73;background:#eff6ff}
+.q-row.skip-row{border-style:dashed}
+.q-row.skip-row:hover{border-color:#8895a7;background:#f8f9fb}
+.q-row.skip-row.sel{border-color:#8895a7;background:#f1f3f6}
+.q-row input[type=radio]{margin-top:2px;flex-shrink:0;accent-color:#0d3b73;width:15px;height:15px;cursor:pointer}
+.q-text{font-size:.88rem;color:#2d3748;line-height:1.55}
+.q-num{font-weight:700;color:#0d3b73;margin-right:4px}
+.q-skip-text{font-size:.84rem;color:#8895a7;font-style:italic}
+.q-group-err{border:2px solid #d93025!important;border-radius:9px;padding:6px!important}
+
+/* ── Score ── */
+.score-sec{margin-top:18px}
+.rubric-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:11px}
+.rb{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;color:#fff}
+.rb1{background:#d93025}.rb2{background:#e05d1e}.rb3{background:#c08a00}.rb4{background:#1a8a52}.rb5{background:#0d3b73}
+.score-btns{display:flex;gap:7px;flex-wrap:wrap}
+.sb{flex:1;min-width:54px;padding:12px 6px;border:2px solid #dde3ec;border-radius:8px;background:#fff;cursor:pointer;text-align:center;transition:all .2s;font-family:inherit}
+.sb:hover{border-color:#0d3b73}
+.sb .sn{display:block;font-size:1.35rem;font-weight:800}
+.sb .sl{display:block;font-size:.62rem;font-weight:600;margin-top:2px;color:inherit}
+
+/* ── Summary / Scoring Sheet ── */
+.sum-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.sum-table th{background:#0d3b73;color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+.sum-table td{padding:10px 14px;border-bottom:1px solid #edf0f5;vertical-align:top}
+.sum-table tr:nth-child(even) td{background:#f8fafc}
+.score-dot{display:inline-flex;width:30px;height:30px;border-radius:50%;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:.95rem}
+.avg-box{background:#eff6ff;border:2px solid #0d3b73;border-radius:10px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.avg-lbl{font-size:.95rem;font-weight:700;color:#0d3b73}
+.avg-sub{font-size:.75rem;color:#5b7fa6;margin-top:2px}
+.avg-val{font-size:2.2rem;font-weight:900;color:#0d3b73}
+/* ── Auto-recommendation banner ── */
+.rec-banner{border-radius:8px;padding:14px 18px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:.95rem;margin-top:14px}
+.rec-banner-icon{font-size:1.3rem;flex-shrink:0}
+.rec-banner.rec-green{background:#ecfdf5;border:1.5px solid #6ee7b7;color:#065f46}
+.rec-banner.rec-amber{background:#fffbeb;border:1.5px solid #f2c744;color:#7c5a00}
+.rec-banner.rec-red{background:#fef2f2;border:1.5px solid #fca5a5;color:#991b1b}
+.rec-sub{font-size:.72rem;font-weight:600;opacity:.7;margin-bottom:2px}
+
+/* ── Hire radio buttons ── */
+.hire-radios{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.hire-opt{display:flex;align-items:center;gap:8px;padding:10px 22px;border:2px solid #dde3ec;border-radius:8px;cursor:pointer;font-size:.92rem;font-weight:600;color:#4a5568;transition:all .2s;user-select:none}
+.hire-opt:hover{border-color:#0d3b73;background:#f5f8fd}
+.hire-opt.sel-yes{border-color:#1a9e5c;background:#ecfdf5;color:#065f46}
+.hire-opt.sel-no{border-color:#d93025;background:#fef2f2;color:#991b1b}
+.hire-opt.sel-undecided{border-color:#c08a00;background:#fffbeb;color:#7c5a00}
+.hire-opt input[type=radio]{accent-color:#0d3b73;width:15px;height:15px;cursor:pointer;flex-shrink:0}
+
+/* ── Submission checkbox ── */
+.submit-box{background:#f0f4ff;border:2px solid #0d3b73;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.submit-label{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.submit-label input[type=checkbox]{width:18px;height:18px;margin-top:2px;accent-color:#0d3b73;flex-shrink:0;cursor:pointer}
+.submit-label span{font-size:.9rem;font-weight:600;color:#0d3b73;line-height:1.55}
+
+/* ── Action buttons ── */
+.action-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.btn-act{display:flex;align-items:center;gap:7px;padding:11px 22px;border-radius:8px;font-size:.92rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-pdf{background:#c0392b;color:#fff}.btn-pdf:hover{background:#a93226}
+.btn-email{background:#0d7fa3;color:#fff}.btn-email:hover{background:#0a6b8a}
+
+/* ── Toast ── */
+.toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#1a9e5c;color:#fff;padding:12px 22px;border-radius:8px;font-size:.88rem;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:999;display:none;text-align:center;max-width:420px;line-height:1.5}
+.toast.show{display:block}
+@media print{.toast{display:none!important}}
+
+/* ── Nav footer ── */
+.nav-footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #dde3ec;padding:11px 20px;display:flex;justify-content:space-between;align-items:center;z-index:200;box-shadow:0 -2px 8px rgba(0,0,0,.07)}
+.btn-back,.btn-next{padding:10px 22px;border-radius:8px;font-size:.92rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-back{background:#eef2f7;color:#4a5568}.btn-back:hover{background:#dde3ec}
+.btn-next{background:#0d3b73;color:#fff}.btn-next:hover{background:#0a2f5e}
+.btn-next:disabled{background:#a0aec0;cursor:not-allowed}
+.step-ind{font-size:.83rem;color:#8895a7;text-align:center}
+
+/* ── How to Use bullets ── */
+.how-list{padding-left:18px;line-height:1.95;font-size:.88rem;color:#4a5568}
+.how-list li strong{color:#1e2d40}
+
+/* ── Landing hero ── */
+.landing-hero{background:linear-gradient(140deg,#0a2f5e 0%,#1356a3 100%);border-radius:14px;padding:36px 28px 30px;color:#fff;margin-bottom:16px;text-align:center}
+.landing-hero-icon{width:52px;height:52px;background:rgba(255,255,255,.15);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.landing-hero-icon svg{width:28px;height:28px}
+.landing-title{font-size:1.45rem;font-weight:800;margin-bottom:10px;letter-spacing:-.01em}
+.landing-desc{font-size:.9rem;opacity:.85;line-height:1.65;max-width:480px;margin:0 auto 24px}
+.landing-steps{display:flex;flex-direction:column;gap:0;max-width:340px;margin:0 auto}
+.ls-item{display:flex;align-items:center;gap:14px;padding:7px 0;position:relative}
+.ls-item:not(:last-child)::after{content:'';position:absolute;left:11px;top:30px;width:2px;height:calc(100% - 4px);background:rgba(255,255,255,.25)}
+.ls-num{width:24px;height:24px;background:#fff;color:#0d3b73;border-radius:50%;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
+.ls-text{font-size:.88rem;font-weight:600;opacity:.92;line-height:1.3}
+
+/* ── Print ── */
+@media print{
+  .app-header,.progress-wrap,.nav-footer,.action-row{display:none!important}
+  body{background:#fff}
+  .main{max-width:100%;margin:0;padding:0}
+  .step-panel{display:none!important}
+  #printView{display:block!important}
+  .card{box-shadow:none;border:1px solid #dde3ec;page-break-inside:avoid;margin-bottom:10px;padding:18px}
+}
+#printView{display:none}
+
+/* ── Print view inner styles ── */
+.pv-header-table{width:100%;border-collapse:collapse;margin-bottom:20px}
+.pv-header-table td{border:1px solid #ccc;padding:8px 12px;font-size:.9rem}
+.pv-header-table td:first-child{font-weight:600;color:#555;width:50%}
+.pv-title{text-align:center;font-size:1.3rem;font-weight:700;margin:10px 0 4px;color:#0d3b73}
+.pv-hr{border:none;border-top:2px solid #0d3b73;margin-bottom:16px}
+.pv-comp{margin-bottom:18px;page-break-inside:avoid}
+.pv-comp-title{font-weight:700;font-size:1rem;color:#0d3b73;margin-bottom:4px}
+.pv-comp-q{font-size:.85rem;color:#333;margin-bottom:6px;font-style:italic}
+.pv-comp-notes{font-size:.85rem;color:#333;background:#f8f9fa;border:1px solid #e0e0e0;border-radius:4px;padding:8px 10px;white-space:pre-wrap;min-height:40px}
+.pv-score-label{font-size:.82rem;font-weight:700;margin-top:6px;color:#333}
+.pv-sum-table{width:100%;border-collapse:collapse;font-size:.88rem;margin-bottom:10px}
+.pv-sum-table th{background:#0d3b73;color:#fff;padding:8px 12px;text-align:left}
+.pv-sum-table td{padding:8px 12px;border-bottom:1px solid #dde3ec;vertical-align:top}
+.pv-avg{font-size:1.1rem;font-weight:700;color:#0d3b73;margin:8px 0}
+.pv-rec{font-size:.88rem;white-space:pre-wrap;background:#f8f9fa;border:1px solid #e0e0e0;border-radius:4px;padding:10px;min-height:60px}
+.pv-ta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;border:1px solid #ccc;padding:12px;border-radius:4px;margin-top:8px}
+.pv-ta-item label{font-size:.78rem;font-weight:600;color:#666;display:block;margin-bottom:4px}
+.pv-ta-item .val{border-bottom:1px solid #333;min-height:22px;font-size:.88rem}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ APP HEADER ═══════════════════════════════════ -->
+<div class="app-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#0d3b73" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+    </svg>
+  </div>
+  <div class="header-text">
+    <div class="org">BJC HealthCare — Physician Recruitment</div>
+    <h1>Behavioral Interview Guide &amp; Feedback</h1>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PROGRESS ═══════════════════════════════════ -->
+<div class="progress-wrap">
+  <div class="progress-steps" id="progressBar"></div>
+</div>
+
+<!-- ═══════════════════════════════════ MAIN CONTENT ═══════════════════════════════════ -->
+<div class="main">
+
+  <!-- ─── STEP 1: Landing + Header Info ─── -->
+  <div class="step-panel" id="step-1">
+    <div class="landing-hero">
+      <div class="landing-hero-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <div class="landing-title">Physician Behavioral Interview Guide</div>
+      <div class="landing-desc">Use this tool to capture structured interview feedback, score candidate competencies, and submit your hire recommendation to the Physician Talent Team.</div>
+      <div class="landing-steps">
+        <div class="ls-item"><span class="ls-num">1</span><span class="ls-text">Enter interview details</span></div>
+        <div class="ls-item"><span class="ls-num">2</span><span class="ls-text">Review legal guidelines</span></div>
+        <div class="ls-item"><span class="ls-num">3</span><span class="ls-text">Score 5 competency areas</span></div>
+        <div class="ls-item"><span class="ls-num">4</span><span class="ls-text">Submit your recommendation</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Interview Details</div>
+      <div class="card-sub">Fill in the information below to begin. All fields are required.</div>
+      <div class="grid2">
+        <div class="fg">
+          <label class="lbl" for="f-position">Position *</label>
+          <input type="text" id="f-position" placeholder="e.g. Internal Medicine Physician">
+          <div class="err-msg" id="e-position">Required.</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" for="f-date">Interview Date *</label>
+          <input type="date" id="f-date">
+          <div class="err-msg" id="e-date">Required.</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" for="f-candidate">Candidate Name *</label>
+          <input type="text" id="f-candidate" placeholder="Full name">
+          <div class="err-msg" id="e-candidate">Required.</div>
+        </div>
+        <div class="fg">
+          <label class="lbl" for="f-interviewer">Interviewer Name *</label>
+          <input type="text" id="f-interviewer" placeholder="Your full name">
+          <div class="err-msg" id="e-interviewer">Required.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── STEP 2: Dos & Don'ts ─── -->
+  <div class="step-panel" id="step-2">
+    <div class="ref-box">
+      <h3>Interview Dos and Don'ts — Legal Guidelines</h3>
+      <p>Some common questions asked during the interview process may be illegal. Interviewers should only ask questions that provide information about the person's <strong>ability to do the job</strong>.</p>
+      <p><strong>Avoid questions related to these areas:</strong></p>
+      <div class="tag-cloud">
+        <span class="tag">Age / Date of Birth</span><span class="tag">Disability</span><span class="tag">Ethnicity</span>
+        <span class="tag">Sex / Sexual Orientation</span><span class="tag">Citizenship</span><span class="tag">Maiden Name</span>
+        <span class="tag">Pregnancy</span><span class="tag">Planning on Having Children</span><span class="tag">Number of Children</span>
+        <span class="tag">Childcare Arrangements</span><span class="tag">Marital Status</span><span class="tag">Current/Past Salary</span>
+        <span class="tag">Credit History</span><span class="tag">Home Ownership</span><span class="tag">Auto Ownership</span>
+        <span class="tag">Lowest Salary Acceptance</span><span class="tag">Criminal History</span><span class="tag">Union Activity</span>
+      </div>
+      <table class="dd-table">
+        <tr><th>Example of Illegal Question</th><th>Possible Legal Alternative</th></tr>
+        <tr><td><strong>Salary:</strong> What is your current/past salary?</td><td><strong>Salary:</strong> What are your salary expectations?</td></tr>
+        <tr><td><strong>Age:</strong> How old are you? What year were you born?</td><td><strong>Age:</strong> Are you over the age of 18?</td></tr>
+        <tr><td><strong>Family:</strong> Are you married? How many children do you have?</td><td><strong>Availability:</strong> Do you have restrictions on your ability to travel or meet work schedules?</td></tr>
+        <tr><td><strong>Citizenship:</strong> Where were you/your parents born? Are you a US citizen?</td><td><strong>Work Authorization:</strong> Are you authorized to work in the United States?</td></tr>
+        <tr><td><strong>Race/Ethnicity/Religion:</strong> All questions are illegal.</td><td><em>No legal alternatives.</em></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">How to Use This Guide</div>
+      <ul class="how-list">
+        <li>Ask each candidate the <strong>same questions</strong> per competency.</li>
+        <li>Take notes on concrete examples using <strong>STAR</strong>: Situation, Task, Action, Result.</li>
+        <li>Rate each response on the <strong>1–5 scale</strong> after the interview.</li>
+        <li>Ask <strong>no more than 1 question</strong> from each competency section.</li>
+        <li>Time constraints may prevent exploring every competency — that is acceptable.</li>
+      </ul>
+
+      <label class="ack-label" for="f-ack">
+        <input type="checkbox" id="f-ack" onchange="clearErr('e-ack')">
+        <span>I have reviewed the Interview Dos and Don'ts and will conduct a legally compliant interview.</span>
+      </label>
+      <div class="err-msg" id="e-ack">Please acknowledge you have reviewed the guidelines before proceeding.</div>
+    </div>
+  </div>
+
+  <!-- ─── STEPS 3-7: Competency sections (rendered by JS) ─── -->
+  <div class="step-panel" id="step-3"></div>
+  <div class="step-panel" id="step-4"></div>
+  <div class="step-panel" id="step-5"></div>
+  <div class="step-panel" id="step-6"></div>
+  <div class="step-panel" id="step-7"></div>
+
+  <!-- ─── STEP 8: Summary ─── -->
+  <div class="step-panel" id="step-8">
+    <div class="card">
+      <div class="card-title">Candidate Evaluation Scoring Sheet</div>
+      <div class="card-sub">Review your scores below. All scored competencies are included in the overall rating.</div>
+      <table class="sum-table" id="sumTable">
+        <tr>
+          <th>Competency Area</th>
+          <th>Question / Topic</th>
+          <th style="text-align:center;width:80px">Score (1–5)</th>
+        </tr>
+      </table>
+      <div class="avg-box">
+        <div>
+          <div class="avg-lbl">Overall Candidate Rating</div>
+          <div class="avg-sub">Average of scored competencies</div>
+        </div>
+        <div class="avg-val" id="avgDisplay">—</div>
+      </div>
+      <div id="autoRecBanner" style="display:none"></div>
+    </div>
+
+    <div class="card">
+      <label class="lbl" style="font-size:1rem;font-weight:700;color:#0d3b73;display:block;margin-bottom:4px">Do you recommend this candidate for hire? *</label>
+      <p style="font-size:.84rem;color:#7a8898;margin-bottom:2px;line-height:1.5">Select your recommendation based on the interview.</p>
+      <div class="hire-radios" id="hireRadios">
+        <label class="hire-opt" id="hire-yes" onclick="selHire('yes',this)">
+          <input type="radio" name="hire" value="yes"> Yes
+        </label>
+        <label class="hire-opt" id="hire-no" onclick="selHire('no',this)">
+          <input type="radio" name="hire" value="no"> No
+        </label>
+        <label class="hire-opt" id="hire-undecided" onclick="selHire('undecided',this)">
+          <input type="radio" name="hire" value="undecided"> Undecided
+        </label>
+      </div>
+      <div class="err-msg" id="e-hire">Please select a hire recommendation.</div>
+
+      <label class="lbl" for="f-rec" style="font-size:.95rem;font-weight:700;color:#0d3b73;display:block;margin-top:18px;margin-bottom:4px">Hire Recommendation Notes</label>
+      <p style="font-size:.84rem;color:#7a8898;margin-bottom:10px;line-height:1.5">Provide any additional context, observations, or rationale to support your recommendation.</p>
+      <textarea id="f-rec" rows="5" placeholder="Share supporting details, notable strengths or concerns, and any context relevant to your recommendation..."></textarea>
+    </div>
+
+    <div class="submit-box">
+      <label class="submit-label" for="f-submit">
+        <input type="checkbox" id="f-submit" onchange="clearErr('e-submit')">
+        <span>I certify this interview feedback is complete and accurate. By checking this box I am submitting this evaluation as final.</span>
+      </label>
+      <div class="err-msg" id="e-submit" style="margin-top:6px;margin-left:28px">Please certify and submit before printing or emailing.</div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-act btn-pdf" onclick="doPrint()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+        Print / Save as PDF
+      </button>
+      <button class="btn-act btn-email" onclick="doEmail()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,12 2,6"/></svg>
+        Submit via Email
+      </button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ═══════════════════════════════════ PRINT VIEW ═══════════════════════════════════ -->
+<div id="printView"></div>
+
+<!-- ═══════════════════════════════════ TOAST ═══════════════════════════════════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════════ NAV FOOTER ═══════════════════════════════════ -->
+<div class="nav-footer">
+  <button class="btn-back" id="btnBack" onclick="goBack()">&#8592; Back</button>
+  <div class="step-ind" id="stepInd">Step 1 of 8</div>
+  <button class="btn-next" id="btnNext" onclick="goNext()">Next &#8594;</button>
+</div>
+
+<script>
+// ═══════════ DATA ═══════════
+const STEPS = 8;
+let cur = 1;
+
+const COMPS = [
+  { key:'teamwork',    name:'Teamwork & Collaboration',          step:3, num:'1 of 5' },
+  { key:'adaptability',name:'Adaptability & Stress Management',  step:4, num:'2 of 5' },
+  { key:'quality',     name:'Quality Improvement & Leadership',  step:5, num:'3 of 5' },
+  { key:'communication',name:'Communication & Patient Experience',step:6, num:'4 of 5' },
+  { key:'professionalism',name:'Professionalism & Ethical Judgment',step:7, num:'5 of 5' }
+];
+
+const QS = {
+  teamwork:[
+    'Tell me about a time you worked closely with nurses, APPs, or other specialists to coordinate patient care. What went well and what did you learn?',
+    'Describe a time you had a disagreement with another clinician about a care plan. How did you resolve it?'
+  ],
+  adaptability:[
+    'Give an example of a high-pressure situation (code blue, surgical complication, difficult patient interaction, clinic backlog) and how you managed it.',
+    'Tell me about a time you had to learn a new system, procedure, or regulation quickly. What was your approach?',
+    'Tell me about a time you faced a complex patient case where the diagnosis or treatment plan was unclear. What steps did you take and what was the outcome?'
+  ],
+  quality:[
+    "Tell me about a quality-improvement or patient-safety initiative you've participated in. What role did you play?",
+    'Describe a time you mentored a resident, fellow, or colleague. What was the impact?'
+  ],
+  communication:[
+    'Tell me about a time you had to explain a difficult diagnosis or treatment to a patient or family. How did you ensure understanding?',
+    'Describe an experience where you turned around a dissatisfied patient or family member. What did you do?',
+    'Describe a situation where you sought out feedback from colleagues or patients. How did you use it?',
+    'Tell us about a time you were able to build trust and rapport with a patient/family with a fundamentally different life experience and background. How were you able to do so, and how has that experience impacted your approach to medicine?'
+  ],
+  professionalism:[
+    'Describe a situation where you faced an ethical dilemma in your practice. What actions did you take?',
+    "Tell me about a time you received constructive feedback you didn't initially agree with. How did you respond?",
+    'Tell me about a situation where you had to balance organizational policy with patient needs or your own professional ethics.'
+  ]
+};
+
+const SCORE_COLORS = {1:'#d93025',2:'#e05d1e',3:'#c08a00',4:'#1a8a52',5:'#0d3b73'};
+const SCORE_LABELS = {1:'Poor',2:'Weak',3:'Acceptable',4:'Strong',5:'Exceptional'};
+
+// State
+const S = {};
+COMPS.forEach(c => { S[c.key] = { qIdx: null, score: null }; });
+
+const STEP_LABELS = ['Info','Guidelines','Teamwork','Adaptability','Quality','Communication','Professionalism','Summary'];
+
+// ═══════════ BUILD COMPETENCY STEPS ═══════════
+COMPS.forEach(c => {
+  const questions = QS[c.key];
+  let qRows = '';
+  questions.forEach((q, i) => {
+    qRows += `<div class="q-row" id="qr-${c.key}-${i}" onclick="selQ('${c.key}',${i},this)">
+      <input type="radio" name="q-${c.key}" value="${i}">
+      <div class="q-text"><span class="q-num">Q${i+1}.</span>${q}</div>
+    </div>`;
+  });
+  qRows += `<div class="q-row skip-row" id="qr-${c.key}--1" onclick="selQ('${c.key}',-1,this)">
+    <input type="radio" name="q-${c.key}" value="-1">
+    <div class="q-skip-text">This competency was not assessed in this interview.</div>
+  </div>`;
+
+  document.getElementById('step-' + c.step).innerHTML = `
+    <div class="card">
+      <div class="comp-badge">Competency ${c.num}</div>
+      <div class="card-title" style="margin-bottom:4px">${c.name}</div>
+      <div class="card-sub">Select the question you asked the candidate, then record your notes and score.</div>
+
+      <label class="lbl" style="margin-bottom:8px;display:block">Question Asked *</label>
+      <div class="q-group" id="qg-${c.key}">${qRows}</div>
+      <div class="err-msg" id="e-q-${c.key}">Please select the question you asked (or mark as not assessed).</div>
+
+      <div id="nsg-${c.key}">
+        <div class="fg" style="margin-top:4px">
+          <label class="lbl" for="notes-${c.key}">Candidate Response <em style="font-weight:400;color:#7a8898;font-size:.8rem">(use <strong style="color:#0d3b73">STAR</strong>: <strong>S</strong>ituation &nbsp;·&nbsp; <strong>T</strong>ask &nbsp;·&nbsp; <strong>A</strong>ction &nbsp;·&nbsp; <strong>R</strong>esult)</em></label>
+          <textarea id="notes-${c.key}" rows="5" placeholder="Situation: ...\nTask: ...\nAction: ...\nResult: ..."></textarea>
+        </div>
+        <div class="score-sec">
+          <label class="lbl" style="margin-bottom:9px;display:block">Score (1–5) *</label>
+          <div class="rubric-row">
+            <span class="rb rb1">1 – Poor</span>
+            <span class="rb rb2">2 – Weak</span>
+            <span class="rb rb3">3 – Acceptable</span>
+            <span class="rb rb4">4 – Strong</span>
+            <span class="rb rb5">5 – Exceptional</span>
+          </div>
+          <div class="score-btns" id="sb-${c.key}">
+            <button class="sb" onclick="setScore('${c.key}',1,this)"><span class="sn">1</span><span class="sl">Poor</span></button>
+            <button class="sb" onclick="setScore('${c.key}',2,this)"><span class="sn">2</span><span class="sl">Weak</span></button>
+            <button class="sb" onclick="setScore('${c.key}',3,this)"><span class="sn">3</span><span class="sl">Acceptable</span></button>
+            <button class="sb" onclick="setScore('${c.key}',4,this)"><span class="sn">4</span><span class="sl">Strong</span></button>
+            <button class="sb" onclick="setScore('${c.key}',5,this)"><span class="sn">5</span><span class="sl">Exceptional</span></button>
+          </div>
+          <div class="err-msg" id="e-score-${c.key}">Please select a score.</div>
+        </div>
+      </div>
+    </div>`;
+});
+
+// ═══════════ PROGRESS BAR ═══════════
+function renderProgress() {
+  const bar = document.getElementById('progressBar');
+  let html = '';
+  for (let i = 1; i <= STEPS; i++) {
+    const done = i < cur, active = i === cur;
+    html += `<div class="ps">
+      <div class="ps-circle ${done?'done':active?'active':''}">${done?'&#10003;':i}</div>
+      <div class="ps-label">${STEP_LABELS[i-1]}</div>
+    </div>`;
+    if (i < STEPS) html += `<div class="ps-line ${i < cur ? 'done':''}"></div>`;
+  }
+  bar.innerHTML = html;
+}
+
+// ═══════════ SHOW STEP ═══════════
+function showStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+  document.getElementById('btnBack').style.visibility = n === 1 ? 'hidden' : 'visible';
+  const nxt = document.getElementById('btnNext');
+  nxt.style.display = n === STEPS ? 'none' : 'block';
+  nxt.innerHTML = n === 1 ? 'Get Started &#8594;' : 'Next &#8594;';
+  document.getElementById('stepInd').textContent = `Step ${n} of ${STEPS}`;
+  renderProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════ NAV ═══════════
+function goNext() {
+  if (!validate(cur)) return;
+  if (cur === STEPS - 1) buildSummary();
+  if (cur < STEPS) { cur++; showStep(cur); }
+}
+function goBack() { if (cur > 1) { cur--; showStep(cur); } }
+
+// ═══════════ VALIDATE ═══════════
+function validate(step) {
+  let ok = true;
+
+  if (step === 1) {
+    ['position','date','candidate','interviewer'].forEach(id => {
+      const el = document.getElementById('f-' + id);
+      if (!el.value.trim()) { el.classList.add('err'); show('e-' + id); ok = false; }
+      else { el.classList.remove('err'); hide('e-' + id); }
+    });
+  }
+
+  if (step === 2) {
+    if (!document.getElementById('f-ack').checked) { show('e-ack'); ok = false; }
+    else hide('e-ack');
+  }
+
+  if (step >= 3 && step <= 7) {
+    const c = COMPS[step - 3].key;
+    if (S[c].qIdx === null) { show('e-q-' + c); document.getElementById('qg-' + c).classList.add('q-group-err'); ok = false; }
+    else { hide('e-q-' + c); document.getElementById('qg-' + c).classList.remove('q-group-err'); }
+    if (S[c].qIdx !== -1 && S[c].qIdx !== null && !S[c].score) { show('e-score-' + c); ok = false; }
+    else if (S[c].score || S[c].qIdx === -1) hide('e-score-' + c);
+  }
+
+  return ok;
+}
+
+function show(id) { const e = document.getElementById(id); if(e) e.classList.add('show'); }
+function hide(id) { const e = document.getElementById(id); if(e) e.classList.remove('show'); }
+function clearErr(id) { hide(id); }
+
+// ═══════════ QUESTION SELECTION ═══════════
+function selQ(comp, idx, row) {
+  S[comp].qIdx = idx;
+  const grp = document.getElementById('qg-' + comp);
+  grp.querySelectorAll('.q-row').forEach(r => r.classList.remove('sel'));
+  row.classList.add('sel');
+  row.querySelector('input[type=radio]').checked = true;
+  grp.classList.remove('q-group-err');
+  hide('e-q-' + comp);
+
+  const nsg = document.getElementById('nsg-' + comp);
+  nsg.style.display = idx === -1 ? 'none' : 'block';
+  if (idx === -1) { S[comp].score = null; }
+}
+
+// ═══════════ SCORE SELECTION ═══════════
+function setScore(comp, score, btn) {
+  S[comp].score = score;
+  const container = document.getElementById('sb-' + comp);
+  container.querySelectorAll('.sb').forEach(b => {
+    b.style.background = '#fff'; b.style.borderColor = '#dde3ec'; b.style.color = '#1e2d40';
+  });
+  btn.style.background = SCORE_COLORS[score];
+  btn.style.borderColor = SCORE_COLORS[score];
+  btn.style.color = '#fff';
+  hide('e-score-' + comp);
+}
+
+// ═══════════ BUILD SUMMARY ═══════════
+function calcAvg() {
+  let tot = 0, cnt = 0;
+  COMPS.forEach(c => { if (S[c.key].score) { tot += S[c.key].score; cnt++; } });
+  return cnt > 0 ? Math.round(tot / cnt) : null;
+}
+
+function autoRecInfo(avg) {
+  if (avg >= 5) return { cls:'rec-green', icon:'⭐', text:'Strong Recommend for Hire' };
+  if (avg >= 4) return { cls:'rec-green', icon:'✔',  text:'Recommend for Hire' };
+  if (avg >= 3) return { cls:'rec-amber', icon:'⚠',  text:'Borderline — Consider with Caution' };
+  if (avg >= 2) return { cls:'rec-red',   icon:'✖',  text:'Do Not Recommend' };
+  return             { cls:'rec-red',   icon:'✖',  text:'Do Not Recommend' };
+}
+
+function buildSummary() {
+  const tbl = document.getElementById('sumTable');
+  while (tbl.rows.length > 1) tbl.deleteRow(1);
+
+  COMPS.forEach(c => {
+    const qi = S[c.key].qIdx, sc = S[c.key].score;
+    const skipped = qi === -1 || qi === null;
+    const qText = skipped ? 'Not assessed' : `Q${qi+1}: ${QS[c.key][qi]}`;
+    const tr = tbl.insertRow();
+    tr.innerHTML = `
+      <td style="font-weight:600">${c.name}</td>
+      <td style="font-size:.82rem;color:#4a5568">${qText}</td>
+      <td style="text-align:center">${sc
+        ? `<span class="score-dot" style="background:${SCORE_COLORS[sc]}">${sc}</span>`
+        : `<span style="color:#8895a7;font-size:.8rem">N/A</span>`}</td>`;
+  });
+
+  const avg = calcAvg();
+  const avgTxt = avg ? avg + '/5' : '—';
+  document.getElementById('avgDisplay').textContent = avgTxt;
+
+  const banner = document.getElementById('autoRecBanner');
+  if (avg) {
+    const r = autoRecInfo(avg);
+    banner.innerHTML = `<div class="rec-banner ${r.cls}">
+      <span class="rec-banner-icon">${r.icon}</span>
+      <div><div class="rec-sub">System Rating Based on Score</div>${r.text}</div>
+    </div>`;
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// ═══════════ HIRE RADIO ═══════════
+function selHire(val, el) {
+  document.querySelectorAll('.hire-opt').forEach(o => {
+    o.classList.remove('sel-yes','sel-no','sel-undecided');
+  });
+  el.classList.add('sel-' + val);
+  el.querySelector('input[type=radio]').checked = true;
+  hide('e-hire');
+}
+
+// ═══════════ SUBMIT VALIDATION ═══════════
+function validateSubmit() {
+  let ok = true;
+  const hireVal = document.querySelector('input[name="hire"]:checked')?.value;
+  if (!hireVal) { show('e-hire'); ok = false; } else hide('e-hire');
+  if (!document.getElementById('f-submit').checked) { show('e-submit'); ok = false; } else hide('e-submit');
+  return ok;
+}
+
+// ═══════════ PRINT ═══════════
+function doPrint() {
+  if (!validateSubmit()) return;
+  buildSummary();
+  buildPrintView();
+  window.print();
+}
+
+function buildPrintView() {
+  const pos    = document.getElementById('f-position').value;
+  const idate  = document.getElementById('f-date').value;
+  const cand   = document.getElementById('f-candidate').value;
+  const iviewr = document.getElementById('f-interviewer').value;
+  const rec    = document.getElementById('f-rec').value;
+  const avg    = calcAvg();
+  const avgTxt = avg ? avg + '/5' : '—';
+  const hireVal = document.querySelector('input[name="hire"]:checked')?.value || '';
+  const hireMap = { yes:'Yes — Recommend for Hire', no:'No — Do Not Recommend', undecided:'Undecided' };
+  const hireDisplay = hireMap[hireVal] || '—';
+  const autoRec = avg ? autoRecInfo(avg).text : '—';
+  const now = new Date();
+  const timestamp = now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) + ' at ' + now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+  let compDetail = '';
+  COMPS.forEach(c => {
+    const qi = S[c.key].qIdx, sc = S[c.key].score;
+    const skipped = qi === -1 || qi === null;
+    const qTxt = skipped ? 'Not assessed in this interview.' : `Q${qi+1}: ${QS[c.key][qi]}`;
+    const notes = skipped ? '' : (document.getElementById('notes-' + c.key)?.value || '');
+    const scoreTxt = sc ? `${sc}/5 — ${SCORE_LABELS[sc]}` : 'N/A';
+    compDetail += `
+      <div class="pv-comp">
+        <div class="pv-comp-title">${c.name}</div>
+        <div class="pv-comp-q">${qTxt}</div>
+        ${!skipped ? `<div class="pv-comp-notes">${escHtml(notes) || '(no notes entered)'}</div><div class="pv-score-label">Score: ${scoreTxt}</div>` : ''}
+      </div>`;
+  });
+
+  let sumRows = '';
+  COMPS.forEach(c => {
+    const qi = S[c.key].qIdx, sc = S[c.key].score;
+    const skipped = qi === -1 || qi === null;
+    const qTxt = skipped ? 'Not assessed' : `Q${qi+1}: ${QS[c.key][qi]}`;
+    sumRows += `<tr><td style="font-weight:600">${c.name}</td><td style="font-size:.82rem">${qTxt}</td><td style="text-align:center;font-weight:700">${sc||'N/A'}</td></tr>`;
+  });
+
+  document.getElementById('printView').innerHTML = `
+    <div class="card">
+      <div class="pv-title">Physician Behavioral Interview Guide</div>
+      <hr class="pv-hr">
+      <table class="pv-header-table">
+        <tr><td>Position: ${escHtml(pos)}</td><td>Date: ${idate}</td></tr>
+        <tr><td>Candidate: ${escHtml(cand)}</td><td>Interviewer: ${escHtml(iviewr)}</td></tr>
+      </table>
+
+      <h3 style="font-size:1rem;color:#0d3b73;margin-bottom:12px">Interview Notes by Competency</h3>
+      ${compDetail}
+
+      <h3 style="font-size:1rem;color:#0d3b73;margin:16px 0 8px">Candidate Evaluation Scoring Sheet</h3>
+      <table class="pv-sum-table">
+        <tr><th>Competency Area</th><th>Question / Topic</th><th style="text-align:center;width:70px">Score (1–5)</th></tr>
+        ${sumRows}
+      </table>
+      <div class="pv-avg">Overall Candidate Rating: ${avgTxt}</div>
+      <div style="font-size:.85rem;margin-top:4px;color:#333"><strong>System Rating:</strong> ${autoRec}</div>
+
+      <h3 style="font-size:1rem;color:#0d3b73;margin:14px 0 6px">Hire Recommendation</h3>
+      <div style="font-size:.95rem;font-weight:700;margin-bottom:8px;color:#1e2d40">Recommend for Hire: <span style="color:#0d3b73">${hireDisplay}</span></div>
+      ${rec ? `<div class="pv-rec">${escHtml(rec)}</div>` : ''}
+
+      <div style="margin-top:20px;border-top:1.5px solid #0d3b73;padding-top:10px;display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:#333">
+        <span style="font-size:1rem">&#9746;</span>
+        <div><strong>Submitted as Final</strong> — ${escHtml(iviewr)} &nbsp;|&nbsp; ${timestamp}</div>
+      </div>
+    </div>`;
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ═══════════ TOAST HELPER ═══════════
+function showToast(msg, duration) {
+  const t = document.getElementById('toast');
+  t.innerHTML = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration || 4000);
+}
+
+// ═══════════ EMAIL ═══════════
+function doEmail() {
+  if (!validateSubmit()) return;
+
+  const pos    = document.getElementById('f-position').value;
+  const idate  = document.getElementById('f-date').value;
+  const cand   = document.getElementById('f-candidate').value;
+  const iviewr = document.getElementById('f-interviewer').value;
+  const rec    = document.getElementById('f-rec').value.trim();
+  const avg    = calcAvg();
+  const avgTxt = avg ? avg + '/5' : 'N/A';
+  const hireVal = document.querySelector('input[name="hire"]:checked')?.value || '';
+  const hireMap = { yes:'Yes — Recommend for Hire', no:'No — Do Not Recommend', undecided:'Undecided' };
+  const autoRec = avg ? autoRecInfo(avg).text : 'N/A';
+
+  let body = `PHYSICIAN BEHAVIORAL INTERVIEW FEEDBACK\n${'='.repeat(50)}\n\n`;
+  body += `Position:      ${pos}\n`;
+  body += `Candidate:     ${cand}\n`;
+  body += `Interviewer:   ${iviewr}\n`;
+  body += `Interview Date:${idate}\n\n`;
+  body += `COMPETENCY SCORES\n${'-'.repeat(40)}\n`;
+
+  COMPS.forEach(c => {
+    const qi = S[c.key].qIdx, sc = S[c.key].score;
+    const skipped = qi === -1 || qi === null;
+    const notes = document.getElementById('notes-' + c.key)?.value || '';
+    body += `\n${c.name}\n`;
+    if (skipped) {
+      body += `  Not assessed\n`;
+    } else {
+      body += `  Question: Q${qi+1} — ${QS[c.key][qi]}\n`;
+      body += `  Score: ${sc ? sc + '/5 (' + SCORE_LABELS[sc] + ')' : 'Not scored'}\n`;
+      if (notes.trim()) body += `  Notes: ${notes.trim()}\n`;
+    }
+  });
+
+  body += `\n${'='.repeat(50)}\n`;
+  body += `OVERALL RATING: ${avgTxt}\n`;
+  body += `SYSTEM RATING:  ${autoRec}\n\n`;
+  body += `RECOMMEND FOR HIRE: ${hireMap[hireVal] || '—'}\n`;
+  if (rec) body += `\nHIRE RECOMMENDATION NOTES:\n${rec}\n`;
+  body += `\nSubmitted by ${iviewr} on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}\n`;
+
+  const subj = encodeURIComponent(`OSI Interview Feedback for ${cand}`);
+  const bodyEnc = encodeURIComponent(body);
+  const mailtoURL = `mailto:?subject=${subj}&body=${bodyEnc}`;
+
+  // Step 1: build & print PDF
+  buildSummary();
+  buildPrintView();
+
+  // Step 2: notify user, then open email after print dialog closes
+  showToast('📎 Save the PDF now, then attach it to the email that opens automatically.', 6000);
+  window.print();
+  // After print dialog is dismissed, open the email
+  setTimeout(() => { window.location.href = mailtoURL; }, 500);
+}
+
+// ═══════════ INIT ═══════════
+// Set today's date as default
+document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+
+// Clear error on input
+['position','date','candidate','interviewer'].forEach(id => {
+  document.getElementById('f-' + id).addEventListener('input', function(){
+    this.classList.remove('err'); hide('e-' + id);
+  });
+});
+
+showStep(1);
+</script>
+</body>
+</html>
